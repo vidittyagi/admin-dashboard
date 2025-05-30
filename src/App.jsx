@@ -1,14 +1,15 @@
-import { Suspense } from 'react'
-import { Routes, Route } from 'react-router-dom'
-import { CircularProgress } from '@mui/material'
-import AuthLayout from './layouts/AuthLayout'
-import DashboardLayout from './layouts/DashboardLayout'
-import LoginPage from './pages/LoginPage'
-import UsersPage from './pages/UsersPage'
-import AnalyticsPage from './pages/AnalyticsPage'
-import SettingsPage from './pages/SettingsPage'
-import PrivateRoute from './routes/PrivateRoute'
-import NotFoundPage from './pages/NotFoundPage'
+import { Suspense, lazy } from "react";
+import { Routes, Route } from "react-router-dom";
+import { CircularProgress } from "@mui/material";
+import AuthLayout from "./layouts/AuthLayout";
+import LoginPage from "./pages/LoginPage";
+import PrivateRoute from "./routes/PrivateRoute";
+import NotFoundPage from "./pages/NotFoundPage";
+
+const DashboardLayout = lazy(() => import("./layouts/DashboardLayout"));
+const UsersPage = lazy(() => import("./pages/UsersPage"));
+const AnalyticsPage = lazy(() => import("./pages/AnalyticsPage"));
+const SettingsPage = lazy(() => import("./pages/SettingsPage"));
 
 function App() {
   return (
@@ -23,7 +24,7 @@ function App() {
         <Route
           path="/"
           element={
-            <PrivateRoute>
+            <PrivateRoute requiredRole="admin">
               <DashboardLayout />
             </PrivateRoute>
           }
@@ -33,11 +34,10 @@ function App() {
           <Route path="settings" element={<SettingsPage />} />
         </Route>
 
-        {/* Catch all */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>
-  )
+  );
 }
 
-export default App
+export default App;

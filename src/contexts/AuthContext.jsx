@@ -1,58 +1,59 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user')
+    const storedUser = localStorage.getItem("user");
     if (storedUser) {
       try {
-        setUser(JSON.parse(storedUser))
+        setUser(JSON.parse(storedUser));
       } catch (error) {
-        console.error('Error parsing stored user:', error)
-        localStorage.removeItem('user')
+        console.error("Error parsing stored user:", error);
+        localStorage.removeItem("user");
       }
     }
-    setLoading(false)
+    setLoading(false);
   }, []);
 
   const login = async (credentials) => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
+        const updatedPassword = localStorage.getItem("userCreds") ? localStorage.getItem("userCreds")?.password : "12345678";
         if (
-          credentials.email === 'v@gmail.com' && 
-          credentials.password === '12345678'
+          credentials.email === "v@gmail.com" &&
+          credentials.password === updatedPassword
         ) {
           const mockUser = {
             id: 1,
             email: credentials.email,
-            name: 'Admin User',
-            role: 'admin',
-            token: 'mock-token-' + Date.now()
-          }
-          localStorage.setItem('user', JSON.stringify(mockUser))
-          setUser(mockUser)
-          resolve(mockUser)
+            name: "Admin User",
+            role: "admin",
+            token: "mock-token-" + Date.now(),
+          };
+          localStorage.setItem("user", JSON.stringify(mockUser));
+          setUser(mockUser);
+          resolve(mockUser);
         } else {
-          reject(new Error('Invalid credentials'))
+          reject(new Error("Invalid credentials"));
         }
-      }, 500)
-    })
-  }
+      }, 500);
+    });
+  };
 
   const logout = () => {
-    localStorage.removeItem('user')
-    setUser(null)
-  }
+    localStorage.removeItem("user");
+    setUser(null);
+  };
 
   const updateUser = (updatedUser) => {
-    const newUser = { ...user, ...updatedUser }
-    localStorage.setItem('user', JSON.stringify(newUser))
-    setUser(newUser)
-  }
+    const newUser = { ...user, ...updatedUser };
+    localStorage.setItem("user", JSON.stringify(newUser));
+    setUser(newUser);
+  };
 
   const value = {
     user,
@@ -60,21 +61,17 @@ export function AuthProvider({ children }) {
     logout,
     updateUser,
     isAuthenticated: !!user,
-    loading
-  }
+    loading,
+  };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider')
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }

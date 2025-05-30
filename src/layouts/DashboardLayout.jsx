@@ -80,7 +80,7 @@ export default function DashboardLayout() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [open, setOpen] = useState(!isMobile)
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   const handleDrawerOpen = () => {
     setOpen(true)
@@ -118,7 +118,7 @@ export default function DashboardLayout() {
               <Notifications />
             </Badge>
           </IconButton>
-          <IconButton color="inherit" onClick={logout}>
+          <IconButton color="inherit">
             <Avatar sx={{ width: 32, height: 32 }}>
               {user?.name?.charAt(0) || 'A'}
             </Avatar>
